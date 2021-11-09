@@ -47,7 +47,7 @@ extern "C" {
 #include <stdio.h>
 
 #define EEPROM_ADDRESS_START	0x08080000
-#define PULSE_PER_360 			960
+#define PULSE_PER_360 			720
 
 uint32_t imp_count;
 uint32_t gradus;

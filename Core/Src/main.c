@@ -288,8 +288,8 @@ void ReadCWButton() {
 	if (HAL_GPIO_ReadPin(BTN_UP_GPIO_Port, BTN_UP_Pin) == GPIO_PIN_RESET
 			&& flag_key1_press) {
 		flag_key1_press = 0;
-		if (man_azimuth==357) man_azimuth=0;
-		man_azimuth=man_azimuth+3;
+		if (man_azimuth==359) man_azimuth=0;
+		man_azimuth=man_azimuth+1;
 		isPushCW = 1;
 		LL_GPIO_ResetOutputPin(CW_GPIO_Port, CW_Pin);
 		lcdGoto(LCD_2nd_LINE,13);
@@ -308,8 +308,8 @@ void ReadCCWButton() {
 	if (HAL_GPIO_ReadPin(BTN_DWN_GPIO_Port, BTN_DWN_Pin) == GPIO_PIN_RESET
 			&& flag_key2_press) {
 		flag_key2_press = 0;
-		if (man_azimuth==0) man_azimuth=357;
-		man_azimuth=man_azimuth-3;
+		if (man_azimuth==0) man_azimuth=359;
+		man_azimuth=man_azimuth-1;
 		isPushCW = 0;
 		LL_GPIO_SetOutputPin(OE_GPIO_Port, OE_Pin);
 		lcdGoto(LCD_2nd_LINE,13);
@@ -488,7 +488,7 @@ int main(void)
   }
   gradus = ReadFromEEPROM(EEPROM_ADDRESS_START);
   man_azimuth = ReadFromEEPROM(EEPROM_ADDRESS_START + sizeof(man_azimuth));
-  imp_count = gradus/3;
+  imp_count = gradus;
   ShowStartAzimuth ();
   str_rx[0] = 0;
   str_rx[1] = 0;
@@ -527,7 +527,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
 }
-
 }
 
 /**
@@ -745,7 +744,7 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 1 */
   TIM_InitStruct.Prescaler = 0;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 7;
+  TIM_InitStruct.Autoreload = 2;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV2;
   LL_TIM_Init(TIM2, &TIM_InitStruct);
   LL_TIM_EnableARRPreload(TIM2);
