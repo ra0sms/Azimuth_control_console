@@ -27,7 +27,17 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-
+extern uint32_t imp_count;
+extern uint32_t gradus;
+extern signed int dir_gradus;
+extern signed int dir_azimuth;
+extern char str_rx[10];
+extern char str_tx[10];
+extern uint32_t time_on_cw;
+extern uint32_t time_on_ccw;
+extern uint8_t flag_stop;
+extern uint8_t flag_status;
+extern uint8_t flag_move;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -163,10 +173,11 @@ void TIM2_IRQHandler(void)
 	if (LL_TIM_IsActiveFlag_UPDATE(TIM2)) {
 					LL_TIM_ClearFlag_UPDATE(TIM2);
 					if (dir_azimuth > dir_gradus){
-						if ( imp_count < ((PULSE_PER_360/2)-1)) imp_count++; else imp_count = 0;
+						if ( imp_count < ((180)-1)) imp_count++; else imp_count = 0;
 					}
 					if (dir_azimuth < dir_gradus){
-						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/2)-1;
+						if (imp_count == 0) imp_count = 360;
+						if ( imp_count > 0 ) imp_count--; else imp_count = ((180))-1;
 					}
 					gradus = imp_count;
 					if (gradus >= 180) dir_gradus = gradus - 360; else dir_gradus = gradus;
@@ -238,4 +249,3 @@ void USART2_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

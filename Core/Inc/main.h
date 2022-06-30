@@ -48,20 +48,9 @@ extern "C" {
 
 #define EEPROM_ADDRESS_START	0x08080000
 #define PULSE_PER_360 			720
+#define step	1
 
-uint32_t imp_count;
-uint32_t gradus;
-signed int dir_gradus;
-uint32_t isPushCW;
-uint32_t man_azimuth;
-signed int dir_azimuth;
-uint32_t time_on_cw;
-uint32_t time_on_ccw;
-char str_rx[10];
-char str_tx[10];
-uint8_t flag_stop;
-uint8_t flag_status;
-uint8_t flag_move;
+
 
 /* USER CODE END Includes */
 
@@ -111,5 +100,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

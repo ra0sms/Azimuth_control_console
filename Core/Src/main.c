@@ -36,6 +36,20 @@ uint16_t adc_value = 0;
 uint8_t flag_adc = 0;
 uint8_t flag_eeprom = 0;
 
+uint32_t imp_count;
+uint32_t gradus;
+signed int dir_gradus;
+uint32_t isPushCW;
+uint32_t man_azimuth;
+signed int dir_azimuth;
+uint32_t time_on_cw;
+uint32_t time_on_ccw;
+char str_rx[10];
+char str_tx[10];
+uint8_t flag_stop;
+uint8_t flag_status;
+uint8_t flag_move;
+
 
 void ShowStartAzimuth();
 void ReadCWButton();
@@ -78,6 +92,23 @@ void SetDefault();
 I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_I2C1_Init(void);
+static void MX_TIM21_Init(void);
+static void MX_USART2_UART_Init(void);
+static void MX_TIM2_Init(void);
+static void MX_ADC_Init(void);
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
 
 void SetDefault(){
 	while (HAL_GPIO_ReadPin(BTN_START_GPIO_Port, BTN_START_Pin) == GPIO_PIN_RESET){
@@ -343,7 +374,8 @@ void ReadStartButton() {
 				LL_GPIO_ResetOutputPin(OE_GPIO_Port, OE_Pin);
 				LL_GPIO_SetOutputPin(CW_GPIO_Port, CW_Pin);
 				LL_mDelay(50);
-				if ((HAL_GetTick() - time_on_cw) > 10000) break;
+				if ((HAL_GetTick() - time_on_cw) > 10000)
+					break;
 			}
 			LL_GPIO_SetOutputPin(OE_GPIO_Port, OE_Pin);
 			LL_GPIO_ResetOutputPin(CW_GPIO_Port, CW_Pin);
@@ -361,7 +393,8 @@ void ReadStartButton() {
 				LL_GPIO_ResetOutputPin(OE_GPIO_Port, OE_Pin);
 				LL_GPIO_SetOutputPin(CCW_GPIO_Port, CCW_Pin);
 				LL_mDelay(50);
-				if ((HAL_GetTick() - time_on_ccw) > 10000) break;
+				if ((HAL_GetTick() - time_on_ccw) > 10000)
+					break;
 			}
 			LL_GPIO_SetOutputPin(OE_GPIO_Port, OE_Pin);
 			LL_GPIO_ResetOutputPin(CCW_GPIO_Port, CCW_Pin);
@@ -370,36 +403,16 @@ void ReadStartButton() {
 		}
 		lcdGoto(LCD_1st_LINE, 13);
 		lcdPuts("   ");
-	    lcdGoto(LCD_1st_LINE, 13);
+		lcdGoto(LCD_1st_LINE, 13);
 		lcdItos(gradus);
 		lcdGoto(LCD_1st_LINE, 16);
 		ConvertGradusToChar(gradus);
 		time_key3_press = HAL_GetTick();
 	}
-
 	if (!flag_key3_press && (HAL_GetTick() - time_key3_press) > 200) {
 		flag_key3_press = 1;
 	}
 }
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
-static void MX_TIM21_Init(void);
-static void MX_USART2_UART_Init(void);
-static void MX_TIM2_Init(void);
-static void MX_ADC_Init(void);
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-
 void WriteToEEPROM (uint32_t address, uint32_t value)
 {
   HAL_StatusTypeDef flash_ok = HAL_ERROR;
@@ -453,7 +466,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -464,15 +476,18 @@ int main(void)
   MX_TIM2_Init();
   MX_ADC_Init();
   /* USER CODE BEGIN 2 */
+
+  //LL_mDelay(10);
+  uint32_t SystemFreq = HAL_RCC_GetHCLKFreq();
+  //lcdSetMode(VIEW_MODE_DispOn_BlkOff_CrsOff);
+  lcdInit();
+  lcdBackLightOn();
+  lcdClrScr();
+
   LL_TIM_EnableCounter(TIM21);
   LL_TIM_EnableIT_UPDATE(TIM21);
   LL_USART_Enable(USART2);
   LL_USART_EnableIT_RXNE(USART2);
-  //LL_mDelay(400);
-  //uint32_t SystemFreq = HAL_RCC_GetHCLKFreq();
-  lcdInit();
-  lcdBackLightOn();
-  lcdClrScr();
 
   imp_count = 0;
   isPushCW = 2;
@@ -486,6 +501,7 @@ int main(void)
   if (HAL_GPIO_ReadPin(BTN_START_GPIO_Port, BTN_START_Pin) == GPIO_PIN_RESET){
 	  SetDefault();
   }
+  LL_mDelay(5);
   gradus = ReadFromEEPROM(EEPROM_ADDRESS_START);
   man_azimuth = ReadFromEEPROM(EEPROM_ADDRESS_START + sizeof(man_azimuth));
   imp_count = gradus;
@@ -499,6 +515,7 @@ int main(void)
    LL_ADC_StartCalibration(ADC1);
    LL_mDelay(5);
    CheckADC();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -525,8 +542,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	}
   /* USER CODE END 3 */
-}
 }
 
 /**
@@ -542,6 +559,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -557,6 +575,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -615,9 +634,11 @@ static void MX_ADC_Init(void)
   /* USER CODE BEGIN ADC_Init 1 */
 
   /* USER CODE END ADC_Init 1 */
+
   /** Configure Regular Channel
   */
   LL_ADC_REG_SetSequencerChAdd(ADC1, LL_ADC_CHANNEL_0);
+
   /** Common config
   */
   ADC_REG_InitStruct.TriggerSource = LL_ADC_REG_TRIG_SOFTWARE;
@@ -686,12 +707,14 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
+
   /** Configure Analogue filter
   */
   if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
   {
     Error_Handler();
   }
+
   /** Configure Digital filter
   */
   if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
@@ -744,7 +767,7 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 1 */
   TIM_InitStruct.Prescaler = 0;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 2;
+  TIM_InitStruct.Autoreload = 1;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV2;
   LL_TIM_Init(TIM2, &TIM_InitStruct);
   LL_TIM_EnableARRPreload(TIM2);
@@ -852,6 +875,8 @@ static void MX_USART2_UART_Init(void)
   USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
   USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_8;
   LL_USART_Init(USART2, &USART_InitStruct);
+  LL_USART_DisableOverrunDetect(USART2);
+  LL_USART_DisableDMADeactOnRxErr(USART2);
   LL_USART_ConfigAsyncMode(USART2);
   LL_USART_Enable(USART2);
   /* USER CODE BEGIN USART2_Init 2 */
@@ -973,5 +998,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
