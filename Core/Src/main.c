@@ -319,8 +319,8 @@ void ReadCWButton() {
 	if (HAL_GPIO_ReadPin(BTN_UP_GPIO_Port, BTN_UP_Pin) == GPIO_PIN_RESET
 			&& flag_key1_press) {
 		flag_key1_press = 0;
-		if (man_azimuth==359) man_azimuth=0;
-		man_azimuth=man_azimuth+1;
+		if (man_azimuth==(360-step)) man_azimuth=0;
+		man_azimuth=man_azimuth+step;
 		isPushCW = 1;
 		LL_GPIO_ResetOutputPin(CW_GPIO_Port, CW_Pin);
 		lcdGoto(LCD_2nd_LINE,13);
@@ -339,8 +339,8 @@ void ReadCCWButton() {
 	if (HAL_GPIO_ReadPin(BTN_DWN_GPIO_Port, BTN_DWN_Pin) == GPIO_PIN_RESET
 			&& flag_key2_press) {
 		flag_key2_press = 0;
-		if (man_azimuth==0) man_azimuth=359;
-		man_azimuth=man_azimuth-1;
+		if (man_azimuth==0) man_azimuth=360-step;
+		man_azimuth=man_azimuth-step;
 		isPushCW = 0;
 		LL_GPIO_SetOutputPin(OE_GPIO_Port, OE_Pin);
 		lcdGoto(LCD_2nd_LINE,13);
@@ -478,7 +478,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   //LL_mDelay(10);
-  uint32_t SystemFreq = HAL_RCC_GetHCLKFreq();
+  volatile uint32_t SystemFreq = HAL_RCC_GetHCLKFreq();
   //lcdSetMode(VIEW_MODE_DispOn_BlkOff_CrsOff);
   lcdInit();
   lcdBackLightOn();
@@ -767,7 +767,7 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 1 */
   TIM_InitStruct.Prescaler = 0;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 1;
+  TIM_InitStruct.Autoreload = timer_preload;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV2;
   LL_TIM_Init(TIM2, &TIM_InitStruct);
   LL_TIM_EnableARRPreload(TIM2);
