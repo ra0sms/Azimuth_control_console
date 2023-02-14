@@ -173,10 +173,10 @@ void TIM2_IRQHandler(void)
 	if (LL_TIM_IsActiveFlag_UPDATE(TIM2)) {
 					LL_TIM_ClearFlag_UPDATE(TIM2);
 					if (dir_azimuth > dir_gradus){
-						if ( imp_count < ((PULSE_PER_360)/8)-1) imp_count++; else imp_count = 0;
+						if ( imp_count < ((PULSE_PER_360)/(timer_preload+1))-1) imp_count++; else imp_count = 0;
 					}
 					if (dir_azimuth < dir_gradus){
-						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/8)-1;
+						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/(timer_preload+1))-1;
 					}
 					gradus = imp_count*step;
 					if (gradus >= 180) dir_gradus = gradus - 360; else dir_gradus = gradus;

@@ -3690,17 +3690,17 @@ void TIM2_IRQHandler(void)
 					if (dir_azimuth > dir_gradus){
  8001672:	4814      	ldr	r0, [pc, #80]	; (80016c4 <TIM2_IRQHandler+0x64>)
  8001674:	4b14      	ldr	r3, [pc, #80]	; (80016c8 <TIM2_IRQHandler+0x68>)
-						if ( imp_count < ((PULSE_PER_360)/8)-1) imp_count++; else imp_count = 0;
+						if ( imp_count < ((PULSE_PER_360)/(timer_preload+1))-1) imp_count++; else imp_count = 0;
  8001676:	4a15      	ldr	r2, [pc, #84]	; (80016cc <TIM2_IRQHandler+0x6c>)
 					if (dir_azimuth > dir_gradus){
  8001678:	681c      	ldr	r4, [r3, #0]
  800167a:	6801      	ldr	r1, [r0, #0]
-						if ( imp_count < ((PULSE_PER_360)/8)-1) imp_count++; else imp_count = 0;
+						if ( imp_count < ((PULSE_PER_360)/(timer_preload+1))-1) imp_count++; else imp_count = 0;
  800167c:	6813      	ldr	r3, [r2, #0]
 					if (dir_azimuth > dir_gradus){
  800167e:	428c      	cmp	r4, r1
  8001680:	dd05      	ble.n	800168e <TIM2_IRQHandler+0x2e>
-						if ( imp_count < ((PULSE_PER_360)/8)-1) imp_count++; else imp_count = 0;
+						if ( imp_count < ((PULSE_PER_360)/(timer_preload+1))-1) imp_count++; else imp_count = 0;
  8001682:	2100      	movs	r1, #0
  8001684:	2b76      	cmp	r3, #118	; 0x76
  8001686:	d800      	bhi.n	800168a <TIM2_IRQHandler+0x2a>
@@ -3711,7 +3711,7 @@ void TIM2_IRQHandler(void)
  800168c:	e005      	b.n	800169a <TIM2_IRQHandler+0x3a>
  800168e:	428c      	cmp	r4, r1
  8001690:	da03      	bge.n	800169a <TIM2_IRQHandler+0x3a>
-						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/8)-1;
+						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/(timer_preload+1))-1;
  8001692:	2b00      	cmp	r3, #0
  8001694:	d014      	beq.n	80016c0 <TIM2_IRQHandler+0x60>
  8001696:	3b01      	subs	r3, #1
@@ -3744,7 +3744,7 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 1 */
 }
  80016be:	bd10      	pop	{r4, pc}
-						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/8)-1;
+						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/(timer_preload+1))-1;
  80016c0:	2377      	movs	r3, #119	; 0x77
  80016c2:	e7e9      	b.n	8001698 <TIM2_IRQHandler+0x38>
  80016c4:	20000098 	.word	0x20000098
