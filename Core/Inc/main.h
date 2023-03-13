@@ -49,7 +49,7 @@ extern "C" {
 #define EEPROM_ADDRESS_START	0x08080000
 #define PULSE_PER_360 			960
 #define step	3
-#define timer_preload	7
+#define timer_preload	7			// (Pulse count for step - 1)
 
 
 

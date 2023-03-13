@@ -831,7 +831,7 @@ static HAL_StatusTypeDef sendInternal(uint8_t lcd_addr, uint8_t data, uint8_t fl
  80006aa:	2301      	movs	r3, #1
  80006ac:	4c13      	ldr	r4, [pc, #76]	; (80006fc <sendInternal.constprop.0.isra.0+0x58>)
  80006ae:	2201      	movs	r2, #1
- 80006b0:	214e      	movs	r1, #78	; 0x4e
+ 80006b0:	217e      	movs	r1, #126	; 0x7e
  80006b2:	0020      	movs	r0, r4
  80006b4:	425b      	negs	r3, r3
  80006b6:	f001 fcdb 	bl	8002070 <HAL_I2C_IsDeviceReady>
@@ -882,7 +882,7 @@ static HAL_StatusTypeDef sendInternal(uint8_t lcd_addr, uint8_t data, uint8_t fl
     res = HAL_I2C_Master_Transmit(&LCD_I2C_PORT, lcd_addr, data_arr, sizeof(data_arr), HAL_MAX_DELAY);
  80006ea:	9100      	str	r1, [sp, #0]
  80006ec:	0020      	movs	r0, r4
- 80006ee:	314f      	adds	r1, #79	; 0x4f
+ 80006ee:	317f      	adds	r1, #127	; 0x7f
  80006f0:	f001 fc2c 	bl	8001f4c <HAL_I2C_Master_Transmit>
     HAL_Delay(BUSY_CYCLE_TIME);
  80006f4:	2005      	movs	r0, #5
