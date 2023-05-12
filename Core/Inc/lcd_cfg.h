@@ -44,8 +44,8 @@ Contact information :
 #ifdef USE_I2C_BUS
 
 #define LCD_I2C_PORT		hi2c1
-#define LCD_I2C_ADDRESS		0x3F		// PCF8574AT
-//#define LCD_I2C_ADDRESS		0x27			// PCF8574T
+//#define LCD_I2C_ADDRESS		0x3F		// PCF8574AT
+#define LCD_I2C_ADDRESS		0x27			// PCF8574T
 
 #define LCD_I2C_ADDRESS_8B	(LCD_I2C_ADDRESS << 1)
 #define PIN_RS    			(1 << 0)

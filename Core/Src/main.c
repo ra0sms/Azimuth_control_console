@@ -209,6 +209,7 @@ void RotateFromUSART(uint32_t grad)
 	lcdItos(gradus);
 	lcdGoto(LCD_1st_LINE, 16);
 	ConvertGradusToChar(gradus);
+	SaveSettings();
 
 }
 
@@ -359,7 +360,6 @@ void ReadStartButton() {
 	if (HAL_GPIO_ReadPin(BTN_START_GPIO_Port, BTN_START_Pin) == GPIO_PIN_RESET
 			&& flag_key3_press) {
 		flag_key3_press = 0;
-		//SaveSettings();
 		LL_TIM_ClearFlag_UPDATE(TIM2);
 		LL_TIM_EnableCounter(TIM2);
 		LL_TIM_EnableIT_UPDATE(TIM2);
@@ -408,6 +408,7 @@ void ReadStartButton() {
 		lcdGoto(LCD_1st_LINE, 16);
 		ConvertGradusToChar(gradus);
 		time_key3_press = HAL_GetTick();
+		SaveSettings();
 	}
 	if (!flag_key3_press && (HAL_GetTick() - time_key3_press) > 200) {
 		flag_key3_press = 1;
