@@ -138,7 +138,7 @@ void CheckADC()
     adc_value = LL_ADC_REG_ReadConversionData12(ADC1);
     if ((adc_value < 3500)&&(flag_adc == 0)) {
     	if (flag_eeprom==1){
-    		SaveSettings();
+    		//SaveSettings();
     		flag_eeprom=0;
     	}
     	flag_adc = 1;
@@ -203,13 +203,13 @@ void RotateFromUSART(uint32_t grad)
 		LL_TIM_DisableCounter(TIM2);
 		LL_TIM_DisableIT_UPDATE(TIM2);
 	}
+	SaveSettings();
 	lcdGoto(LCD_1st_LINE, 13);
 	lcdPuts("   ");
 	lcdGoto(LCD_1st_LINE, 13);
 	lcdItos(gradus);
 	lcdGoto(LCD_1st_LINE, 16);
 	ConvertGradusToChar(gradus);
-	SaveSettings();
 
 }
 
@@ -401,6 +401,7 @@ void ReadStartButton() {
 			LL_TIM_DisableCounter(TIM2);
 			LL_TIM_DisableIT_UPDATE(TIM2);
 		}
+		SaveSettings();
 		lcdGoto(LCD_1st_LINE, 13);
 		lcdPuts("   ");
 		lcdGoto(LCD_1st_LINE, 13);
@@ -408,7 +409,6 @@ void ReadStartButton() {
 		lcdGoto(LCD_1st_LINE, 16);
 		ConvertGradusToChar(gradus);
 		time_key3_press = HAL_GetTick();
-		SaveSettings();
 	}
 	if (!flag_key3_press && (HAL_GetTick() - time_key3_press) > 200) {
 		flag_key3_press = 1;
@@ -505,7 +505,7 @@ int main(void)
   LL_mDelay(5);
   gradus = ReadFromEEPROM(EEPROM_ADDRESS_START);
   man_azimuth = ReadFromEEPROM(EEPROM_ADDRESS_START + sizeof(man_azimuth));
-  imp_count = gradus;
+  imp_count = gradus/step;
   ShowStartAzimuth ();
   str_rx[0] = 0;
   str_rx[1] = 0;
