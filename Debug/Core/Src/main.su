@@ -11,10 +11,10 @@
 ../Core/Src/main.c:417:6:WriteToEEPROM	16	static
 ../Core/Src/main.c:113:6:SetDefault	8	static
 ../Core/Src/main.c:299:6:SaveSettings	8	static
-../Core/Src/main.c:153:6:RotateFromUSART	24	static
+../Core/Src/main.c:153:6:RotateFromUSART	32	static
 ../Core/Src/main.c:240:6:CheckUSART	8	static
-../Core/Src/main.c:359:6:ReadStartButton	24	static
+../Core/Src/main.c:359:6:ReadStartButton	40	static
 ../Core/Src/main.c:441:10:ReadFromEEPROM	0	static
 ../Core/Src/main.c:554:6:SystemClock_Config	104	static,ignoring_inline_asm
-../Core/Src/main.c:451:5:main	112	static,ignoring_inline_asm
+../Core/Src/main.c:451:5:main	120	static,ignoring_inline_asm
 ../Core/Src/main.c:975:6:Error_Handler	0	static,ignoring_inline_asm

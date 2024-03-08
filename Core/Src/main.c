@@ -39,7 +39,7 @@ uint8_t flag_eeprom = 0;
 uint32_t imp_count;
 uint32_t gradus;
 signed int dir_gradus;
-uint32_t isPushCW;
+uint8_t isPushCW;
 uint32_t man_azimuth;
 signed int dir_azimuth;
 uint32_t time_on_cw;

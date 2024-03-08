@@ -4,7 +4,7 @@
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:633:17:RCC_GetPCLK1ClockFreq	0	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:579:17:RCC_GetSystemClockFreq	8	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:112:13:LL_RCC_DeInit	16	static,ignoring_inline_asm
-../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:222:6:LL_RCC_GetSystemClocksFreq	8	static
+../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:222:6:LL_RCC_GetSystemClocksFreq	16	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:247:10:LL_RCC_GetUSARTClockFreq	8	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:344:10:LL_RCC_GetI2CClockFreq	8	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c:423:10:LL_RCC_GetLPUARTClockFreq	8	static
