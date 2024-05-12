@@ -1,5 +1,5 @@
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c:116:13:LL_USART_DeInit	0	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c:187:13:LL_USART_Init	16	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c:303:6:LL_USART_StructInit	0	static
-../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c:329:13:LL_USART_ClockInit	12	static
+../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c:329:13:LL_USART_ClockInit	8	static
 ../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c:387:6:LL_USART_ClockStructInit	0	static
