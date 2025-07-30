@@ -45,6 +45,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 
 #define EEPROM_ADDRESS_START	0x08080000
 #define PULSE_PER_360 			720

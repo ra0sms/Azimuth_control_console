@@ -214,75 +214,38 @@ void RotateFromUSART(uint32_t grad)
 }
 
 uint32_t ConvertCharToGradus() {
-	uint8_t hund = 0;
-	uint8_t dec = 0;
-	uint8_t one = 0;
-	uint8_t ostatok = 0;
-	uint32_t rezult = 0;
-	hund = str_rx[1] - 48;
-	dec = str_rx[2] - 48;
-	one = str_rx[3] - 48;
-	rezult = hund * 100 + dec * 10 + one;
-	ostatok = rezult % 3;
-	str_rx[0] = 0;
-	str_rx[1] = 0;
-	str_rx[2] = 0;
-	str_rx[3] = 0;
-	str_rx[4] = 0;
-	str_rx[5] = 0;
-	if (ostatok == 0)
-		return rezult;
-	else
-		return (rezult - ostatok);
+    uint32_t rezult = (str_rx[1] - '0') * 100 +
+                      (str_rx[2] - '0') * 10 +
+                      (str_rx[3] - '0');
 
+    memset(str_rx, 0, 6);
+
+    return rezult - (rezult % 3);
 }
 
 void CheckUSART()
 {
-	if (flag_status == 1)
-		{
-		flag_status=0;
-		ConvertGradusToChar(gradus);
-		str_rx[0]=0;
-		str_rx[1]=0;
-		str_rx[2]=0;
-		str_rx[3]=0;
-		str_rx[4]=0;
-		str_rx[5]=0;
-		USART2_Send_String(str_tx);
-		}
-	if (flag_move == 1)
-	{
-		flag_move = 0;
-		RotateFromUSART(ConvertCharToGradus());
-	}
+    if (flag_status)
+    {
+        flag_status = 0;
+        ConvertGradusToChar(gradus);
+        memset(str_rx, 0, 6);
+        USART2_Send_String(str_tx);
+    }
 
+    if (flag_move)
+    {
+        flag_move = 0;
+        RotateFromUSART(ConvertCharToGradus());
+    }
 }
 
-void ConvertGradusToChar (uint32_t grad)
-{
-	uint8_t hund=0;
-	uint8_t dec=0;
-	uint8_t one=0;
-	if (grad >= 100)
-		{
-		hund = grad / 100;
-		dec = (grad % 100)/10;
-		one = dec % 10;
-		}
-	if (grad < 10)
-	{
-		hund = 0;
-		dec = 0;
-		one = grad;
-	}
-	if ((grad>9)&&(grad<100))
-	{
-		hund = 0;
-		dec = grad/10;
-		one = grad % 10;
-	}
-	sprintf (str_tx, "+0%d%d%d\r\n",hund,dec,one);
+void ConvertGradusToChar(uint32_t grad) {
+    uint8_t hund = grad / 100;
+    uint8_t dec = (grad % 100) / 10;
+    uint8_t one = grad % 10;
+
+    sprintf(str_tx, "+0%d%d%d\r\n", hund, dec, one);
 }
 
 void USART2_Send (char chr){
@@ -356,64 +319,47 @@ void ReadCCWButton() {
 		flag_key2_press = 1;
 	}
 }
-void ReadStartButton() {
-	if (HAL_GPIO_ReadPin(BTN_START_GPIO_Port, BTN_START_Pin) == GPIO_PIN_RESET
-			&& flag_key3_press) {
-		flag_key3_press = 0;
-		LL_TIM_ClearFlag_UPDATE(TIM2);
-		LL_TIM_EnableCounter(TIM2);
-		LL_TIM_EnableIT_UPDATE(TIM2);
-		if (dir_azimuth > dir_gradus) {
-			time_on_cw = HAL_GetTick();
-			while (dir_gradus < dir_azimuth) {
-				lcdGoto(LCD_1st_LINE, 13);
-				lcdPuts("   ");
-				lcdGoto(LCD_1st_LINE, 13);
-				lcdItos(gradus);
-				lcdGoto(LCD_1st_LINE, 16);
-				LL_GPIO_ResetOutputPin(OE_GPIO_Port, OE_Pin);
-				LL_GPIO_SetOutputPin(CW_GPIO_Port, CW_Pin);
-				LL_mDelay(50);
-				if ((HAL_GetTick() - time_on_cw) > 10000)
-					break;
-			}
-			LL_GPIO_SetOutputPin(OE_GPIO_Port, OE_Pin);
-			LL_GPIO_ResetOutputPin(CW_GPIO_Port, CW_Pin);
-			LL_TIM_DisableCounter(TIM2);
-			LL_TIM_DisableIT_UPDATE(TIM2);
 
-		} else {
-			time_on_ccw = HAL_GetTick();
-			while (dir_gradus > dir_azimuth) {
-				lcdGoto(LCD_1st_LINE, 13);
-				lcdPuts("   ");
-				lcdGoto(LCD_1st_LINE, 13);
-				lcdItos(gradus);
-				lcdGoto(LCD_1st_LINE, 16);
-				LL_GPIO_ResetOutputPin(OE_GPIO_Port, OE_Pin);
-				LL_GPIO_SetOutputPin(CCW_GPIO_Port, CCW_Pin);
-				LL_mDelay(50);
-				if ((HAL_GetTick() - time_on_ccw) > 10000)
-					break;
-			}
-			LL_GPIO_SetOutputPin(OE_GPIO_Port, OE_Pin);
-			LL_GPIO_ResetOutputPin(CCW_GPIO_Port, CCW_Pin);
-			LL_TIM_DisableCounter(TIM2);
-			LL_TIM_DisableIT_UPDATE(TIM2);
-		}
-		SaveSettings();
-		lcdGoto(LCD_1st_LINE, 13);
-		lcdPuts("   ");
-		lcdGoto(LCD_1st_LINE, 13);
-		lcdItos(gradus);
-		lcdGoto(LCD_1st_LINE, 16);
-		ConvertGradusToChar(gradus);
-		time_key3_press = HAL_GetTick();
-	}
-	if (!flag_key3_press && (HAL_GetTick() - time_key3_press) > 200) {
-		flag_key3_press = 1;
-	}
+void UpdateLCDDisplay(uint32_t value) {
+    lcdGoto(LCD_1st_LINE, 13);
+    lcdPuts("   ");
+    lcdGoto(LCD_1st_LINE, 13);
+    lcdItos(value);
+    lcdGoto(LCD_1st_LINE, 16);
 }
+
+void ReadStartButton() {
+    const uint32_t current_tick = HAL_GetTick();
+    if (!flag_key3_press && (current_tick - time_key3_press) > 200) {
+        flag_key3_press = 1;
+    }
+    if (HAL_GPIO_ReadPin(BTN_START_GPIO_Port, BTN_START_Pin) == GPIO_PIN_RESET && flag_key3_press) {
+        flag_key3_press = 0;
+        time_key3_press = current_tick;
+        LL_TIM_ClearFlag_UPDATE(TIM2);
+        LL_TIM_EnableCounter(TIM2);
+        LL_TIM_EnableIT_UPDATE(TIM2);
+        GPIO_TypeDef* dir_port = (dir_azimuth > dir_gradus) ? CW_GPIO_Port : CCW_GPIO_Port;
+        uint32_t dir_pin = (dir_azimuth > dir_gradus) ? CW_Pin : CCW_Pin;
+        uint32_t* time_var = (dir_azimuth > dir_gradus) ? &time_on_cw : &time_on_ccw;
+        *time_var = current_tick;
+        while ((dir_azimuth > dir_gradus) ? (dir_gradus < dir_azimuth) : (dir_gradus > dir_azimuth)) {
+            UpdateLCDDisplay(gradus);
+            LL_GPIO_ResetOutputPin(OE_GPIO_Port, OE_Pin);
+            LL_GPIO_SetOutputPin(dir_port, dir_pin);
+            LL_mDelay(50);
+            if ((HAL_GetTick() - *time_var) > 10000) break;
+        }
+        LL_GPIO_SetOutputPin(OE_GPIO_Port, OE_Pin);
+        LL_GPIO_ResetOutputPin(dir_port, dir_pin);
+        LL_TIM_DisableCounter(TIM2);
+        LL_TIM_DisableIT_UPDATE(TIM2);
+        SaveSettings();
+        UpdateLCDDisplay(gradus);
+        ConvertGradusToChar(gradus);
+    }
+}
+
 void WriteToEEPROM (uint32_t address, uint32_t value)
 {
   HAL_StatusTypeDef flash_ok = HAL_ERROR;
@@ -479,7 +425,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   //LL_mDelay(10);
-  volatile uint32_t SystemFreq = HAL_RCC_GetHCLKFreq();
+  //volatile uint32_t SystemFreq = HAL_RCC_GetHCLKFreq();
   //lcdSetMode(VIEW_MODE_DispOn_BlkOff_CrsOff);
   lcdInit();
   lcdBackLightOn();

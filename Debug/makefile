@@ -66,8 +66,8 @@ all: main-build
 main-build: Rotator.elf secondary-outputs
 
 # Tool invocations
-Rotator.elf Rotator.map: $(OBJS) $(USER_OBJS) C:\Users\ra0sms\Documents\stm32\stm32l010\Rotator\STM32L010F4PX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Rotator.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\ra0sms\Documents\stm32\stm32l010\Rotator\STM32L010F4PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Rotator.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Rotator.elf Rotator.map: $(OBJS) $(USER_OBJS) /home/ra0sms/stm32/stm32l010/Rotator/STM32L010F4PX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Rotator.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/ra0sms/stm32/stm32l010/Rotator/STM32L010F4PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Rotator.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

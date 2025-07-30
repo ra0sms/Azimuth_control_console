@@ -169,24 +169,28 @@ void ADC1_IRQHandler(void)
   */
 void TIM2_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM2_IRQn 0 */
-	if (LL_TIM_IsActiveFlag_UPDATE(TIM2)) {
-					LL_TIM_ClearFlag_UPDATE(TIM2);
-					if (dir_azimuth > dir_gradus){
-						if ( imp_count < ((PULSE_PER_360)/(timer_preload+1))-1) imp_count++; else imp_count = 0;
-					}
-					if (dir_azimuth < dir_gradus){
-						if ( imp_count > 0 ) imp_count--; else imp_count = ((PULSE_PER_360)/(timer_preload+1))-1;
-					}
-					gradus = imp_count*step;
-					if (gradus >= 180) dir_gradus = gradus - 360; else dir_gradus = gradus;
-					time_on_cw = HAL_GetTick();
-					time_on_ccw = HAL_GetTick();
-				}
-  /* USER CODE END TIM2_IRQn 0 */
-  /* USER CODE BEGIN TIM2_IRQn 1 */
+    if (LL_TIM_IsActiveFlag_UPDATE(TIM2))
+    {
+        LL_TIM_ClearFlag_UPDATE(TIM2);
 
-  /* USER CODE END TIM2_IRQn 1 */
+        const uint32_t max_count = (PULSE_PER_360)/(timer_preload+1) - 1;
+
+        if (dir_azimuth > dir_gradus)
+        {
+            imp_count = (imp_count < max_count) ? imp_count + 1 : 0;
+        }
+        else if (dir_azimuth < dir_gradus)
+        {
+            imp_count = (imp_count > 0) ? imp_count - 1 : max_count;
+        }
+
+        gradus = imp_count * step;
+        dir_gradus = (gradus >= 180) ? gradus - 360 : gradus;
+
+        uint32_t current_time = HAL_GetTick();
+        time_on_cw = current_time;
+        time_on_ccw = current_time;
+    }
 }
 
 /**
@@ -211,38 +215,28 @@ void TIM21_IRQHandler(void)
   */
 void USART2_IRQHandler(void)
 {
-  /* USER CODE BEGIN USART2_IRQn 0 */
-	LL_USART_DisableIT_RXNE(USART2);
-	char letter;
-	static uint8_t i = 0;
-	letter = USART2->RDR;
-	if (letter != '\n') {
-		str_rx[i] = letter;
-		i++;
-		if (i == 9)
-			i = 0;
-	} else {
-		str_rx[i] = '\n';
-		i = 0;
-		if (str_rx[0] == 'S')
-			flag_stop = 1;
-		else
-			flag_stop = 0;
-		if (str_rx[0] == 'M')
-			flag_move = 1;
-		else
-			flag_move = 0;
-		if (str_rx[0] == 'C')
-			flag_status = 1;
-		else
-			flag_status = 0;
-	}
+    /* USER CODE BEGIN USART2_IRQn 0 */
+    LL_USART_DisableIT_RXNE(USART2);
 
-	LL_USART_EnableIT_RXNE(USART2);
-  /* USER CODE END USART2_IRQn 0 */
-  /* USER CODE BEGIN USART2_IRQn 1 */
+    static uint8_t i = 0;
+    char letter = LL_USART_ReceiveData8(USART2);
 
-  /* USER CODE END USART2_IRQn 1 */
+    if (letter != '\n') {
+        str_rx[i] = letter;
+        i = (i < 8) ? i + 1 : 0;
+    }
+    else {
+        str_rx[i] = '\0';
+        i = 0;
+
+        uint8_t cmd = str_rx[0];
+        flag_stop   = (cmd == 'S');
+        flag_move   = (cmd == 'M');
+        flag_status = (cmd == 'C');
+    }
+
+    LL_USART_EnableIT_RXNE(USART2);
+    /* USER CODE END USART2_IRQn 0 */
 }
 
 /* USER CODE BEGIN 1 */
